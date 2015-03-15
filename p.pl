@@ -134,23 +134,46 @@ sub run_tests {
 sub regex_substitute {
     my ( $str, $regex, $replacement, %opt ) = @_;
 
-    # Do global match and replace by default 
+    # Do global match-and-replace by default 
     $opt{global} //= 1;
     
+    # In order not to mess up the current position when we do global
+    #  match-and-replace, we make a copy $result_str of $str here
+    #  and do all matching on $str, whereas all replacements is done
+    #  on $result_str
     my $result_str = $str;
+
+    #Initialize position to start of string,
+    #  so the regex \G assertion will work properly.
     pos( $str ) = 0;
     pos( $result_str ) = 0;
     my $replace_function = _parse_replacement( $replacement );
     while (1) {
+
+        # The 's' modifier is needed to make the dot match newlines
         my @captures = $str =~ /\G.*?$regex/s;
         last if @captures == 0; 
+
+        # Update the starting position for the next search to
+        #  the place where the current match ended.
         pos($str) = $+[0];
+
+        # Obtain the replacement string
         my $result = $replace_function->(\@captures);
+
+        # The \K escape is used to keep the stuff to the left of the
+        #  $regex match in the replacement when we using \G as an anchor.
         if ($result_str =~ s/\G.*?\K$regex/$result/s) {
+
+            # Unfortunately @+ and @- refers to the string before
+            # we did the substitution. So we need to calculate how
+            # much the string expanded or shrunk, to set the correct
+            # position for the next search-and-replace.
             my $length_of_match = ($+[0] - $-[0]);
             my $offset = length( $result ) - $length_of_match;
             pos( $result_str ) = $+[0] + $offset;
         } else {
+            # Should not happen:
             croak "No replacements is unexpected at this point!";
         }
         last unless $opt{global};
