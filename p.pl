@@ -37,6 +37,7 @@ sub run_tests {
     }
 }
 
+# SYNOPSIS
 #
 #    $new_string = regex_substitute ( $str, $regex, $replacement, %opt )
 #
