@@ -167,7 +167,7 @@ sub regex_substitute {
         my $result = $replace_function->(\@captures);
 
         # The \K escape is used to keep the stuff to the left of the
-        #  $regex match in the replacement when we using \G as an anchor.
+        #  $regex match in the replacement when we are using \G as an anchor.
         if ($result_str =~ s/\G.*?\K$regex/$result/s) {
 
             # Unfortunately @+ and @- refers to the string before
@@ -186,6 +186,7 @@ sub regex_substitute {
     return $result_str;
 }
 
+# SYNOPSIS
 #
 #    $replace_func = _parse_replacement ( $replacement )
 #
@@ -197,7 +198,8 @@ sub regex_substitute {
 #   string.
 #
 # INPUT:
-#   - $replacement See the description of $replacement in
+#   - $replacement
+#     See the description of $replacement in
 #     function "regex_substitute" above.
 #  
 # RETURN VALUE:
@@ -218,9 +220,10 @@ sub _parse_replacement {
     # Backreferences are represented as references, in order to be able
     # to separate them from the strings. For example, an item equal to \2
     # is of type reference, and it refers to the number 2 which is the number
-    # of the backreference.
+    # of a backreference.
     # So, if we encounter a backreference in $replacement, say "${22}",
-    # we push it as "\22"..
+    # we push it as "\21" (one less than 22: since $0 is not used and it is
+    # useful to have the numbers zero-based later also..)
     # 
     # So, literals are strings, backrefs are refs
     my @tokens;
@@ -315,15 +318,15 @@ sub _parse_replacement {
     # This function should be called with an array reference $captures
     # The $captures array should contain all captures from applying the
     #  regex "$regex" to the original string "$str", see the documentation above
-    # the "parse_replacement" function for more information on $regex and $str..
+    # the "regex_substitute" function for more information on $regex and $str..
     return sub {
         my ($captures) = @_;
         my $buffer = '';
 
         # Scan the @token array (defined in the parent scope), and
-        #  glue together the new string (the return value)from literals
-        #  and backrefs (into the capture array).
-        # Example: @tokens = ("aaa", \1, "bbb")
+        #  glue together the new string (the return value from this function)
+        #  from literals and backrefs (into the capture array).
+        # Example: @tokens = ("aaa", \0, "bbb")
         #          $captures = ["ccc"]
         # will produce the string: "aaacccbbb"
         #
