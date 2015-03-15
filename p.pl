@@ -51,7 +51,7 @@ sub run_tests {
 #
 # This function is intended to be used for the case when you want to do a
 #  regex substitution on a string where both the regex and the replacement string
-#  is input by the user (and thus not known at
+#  are input by the user (and thus not known at
 #  compile time) and the replacement string is also allowed to contain backreferences
 #  to capture groups in the given regex.
 #
@@ -60,7 +60,7 @@ sub run_tests {
 #     $str =~ /$regex/$replacement/ee;
 #
 #  should not be used. Since it would allow random code execution
-#  (either by accident or by purpose) on the users computer that could
+#  (either by accident or by purpose) on the user's computer that could
 #  have unintended and undesirable consequences. For example, if the user enters
 #
 #    $replacement = 'do{ use Env qw(HOME); unlink "$HOME/important.txt" }';
@@ -78,11 +78,11 @@ sub run_tests {
 #   Example:  $regex = qr/a(.*?)a/;
 #
 # - $replacement
-#   The replacement string (must) consists of:
-#   1. ordinary literals
-#   2. ordinary backreferences
-#   3. escaped dollar signs
-#   4. escaped backslashes
+#   The replacement string (can/must) consists of the following tokens:
+#   1. literals,
+#   2. backreferences, 
+#   3. escaped dollar signs, 
+#   4. escaped backslashes.
 #
 #   A backreference token consists of a dollar sign followed by an
 #   integer.  Backreferences can also optionally be surrounded by
