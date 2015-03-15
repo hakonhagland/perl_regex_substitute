@@ -55,12 +55,17 @@ sub run_tests {
 #  compile time) and the replacement string is also allowed to contain backreferences
 #  to capture groups in the given regex.
 #
-#  The straight forward (and careless) application of the 'ee' modifier
-#   like  $str =~ /$regex/$replacement/ee;
+#  The straight forward (and careless) application of the 'ee' modifier like
+#
+#     $str =~ /$regex/$replacement/ee;
 #
 #  should not be used. Since it would allow random code execution
 #  (either by accident or by purpose) on the users computer that could
-#  have unintended and undesirable consequences.
+#  have unintended and undesirable consequences. For example, if the user enters
+#
+#    $replacement = 'do{ use Env qw(HOME); unlink "$HOME/important.txt" }';
+# 
+#  the file "important.txt" in the users home directory will be deleted..
 #
 #  This function was written in an attempt to overcome those problems.
 #
