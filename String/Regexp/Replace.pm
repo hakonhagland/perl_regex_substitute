@@ -1,5 +1,7 @@
 #! /usr/bin/env perl
 
+package String::Regexp::Replace;
+
 use feature qw(say);
 use strict;
 use warnings;
@@ -7,35 +9,6 @@ use warnings;
 use Carp;
 use Data::Dump qw(dd dump);
 use Scalar::Util 'reftype';
-
-run_tests();
-exit;
-
-sub run_tests {
-    # Test cases:
-    # Format:
-    #   string,       regex,    replacement, expected
-    my @test_cases = (
-        ['aba',      'a(.*?)a', '$1',      'b'],
-        ['yyababaxxa', 'a(.*?)a', '$1',    'yybbxx'],
-        ['acccb',    'a(.*?)b', '$1\$',    'ccc$'],
-        ['abxybaxy', '(x)(y)',  '${2}3$1', 'aby3xbay3x']
-    );
-
-    for (0..$#test_cases) {
-        say "Case " . ($_ + 1);
-        say "--------";
-        my ($str, $regex, $replacement, $expected_result) = @{$test_cases[$_]};
-        say "String: '$str'";
-        say "Regex: " . dump($regex);
-        say "Replacement: '$replacement'";
-        say "Expected: '$expected_result'";
-        my $result_str = regex_substitute( $str, $regex, $replacement );
-        say "Result2: '$result_str'";
-        say "Test result: " . (($expected_result eq $result_str) ? "passed" : "failed");
-        say "";
-    }
-}
 
 # SYNOPSIS
 #
@@ -133,6 +106,7 @@ sub run_tests {
 #  Håkon Hægland  (hakon.hagland@gmail.com)
 #
 # COPYRIGHT AND LICENSE
+#
 #    This code is free software; you may redistribute it and/or
 #    modify it under the same terms as Perl itself.
 #
@@ -353,3 +327,4 @@ sub _parse_replacement {
     };
 }
 
+1;
